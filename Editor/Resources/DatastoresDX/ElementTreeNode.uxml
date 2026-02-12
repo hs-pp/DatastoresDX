@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="tree-node-view" style="background-color: rgba(0, 0, 0, 0); flex-direction: row; flex-grow: 0; min-width: 100px;">
+        <ui:VisualElement name="drawer-area" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;" />
+        <ui:VisualElement name="context-menu-catcher" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex;" />
+    </ui:VisualElement>
+</ui:UXML>

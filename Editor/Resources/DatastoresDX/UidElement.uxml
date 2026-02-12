@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="uid-container" style="flex-grow: 0; height: 18px; flex-shrink: 0; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; flex-direction: row; width: auto; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; background-color: rgb(42, 42, 42);">
+        <ui:Label tabindex="-1" text="UID" display-tooltip-when-elided="true" name="uuid-label" style="-unity-font-style: normal; font-size: 10px; -unity-text-align: middle-center; padding-left: 3px; padding-right: 2px; padding-top: 0; padding-bottom: 0; border-right-width: 1px; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32);" />
+        <ui:VisualElement name="id-container" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); min-width: auto; min-height: auto; flex-direction: row; overflow: hidden; flex-shrink: 0;">
+            <ui:Label tabindex="-1" text="ABC123" display-tooltip-when-elided="true" name="id1-label" style="flex-grow: 0; -unity-text-align: middle-right; -unity-font-style: bold; font-size: 11px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

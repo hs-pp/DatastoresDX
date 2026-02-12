@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="workflow-elements-view" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: flex;">
+        <ui:VisualElement name="selected-workflow-indicator" style="flex-grow: 0; background-color: rgb(56, 56, 56); flex-shrink: 0; height: 25px; border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; margin-top: 5px; flex-direction: row; margin-bottom: 4px;">
+            <ui:VisualElement name="workflow-back-element" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); background-image: resource(&apos;DatastoresDX/BackIcon&apos;); width: 8px; flex-shrink: 0; margin-right: 4px; margin-left: 2px; margin-top: 2px; margin-bottom: 2px; display: flex; -unity-background-image-tint-color: rgb(207, 207, 207);" />
+            <ui:VisualElement name="selected-workflow-label-container" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                <ui:Label tabindex="-1" text="Datastores and longer text is here kjldsdfsfdf sdfds sd dsfsdds dfddfd ssd" display-tooltip-when-elided="true" name="selected-workflow-label" style="flex-grow: 1; -unity-text-align: middle-left; -unity-font-style: italic; font-size: 13px; color: rgb(141, 141, 141); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; visibility: visible;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="space" style="height: 27px; display: none;" />
+        <ui:VisualElement name="filter-area" style="height: 24px; flex-direction: row; margin-bottom: 4px; margin-top: 4px; overflow: hidden; align-items: center;">
+            <uie:ToolbarSearchField focusable="true" name="filter-search-field" style="flex-grow: 1; flex-shrink: 1; width: auto; border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; height: 20px;" />
+            <ui:Button text="FILTERS" display-tooltip-when-elided="true" name="filters-button" style="border-left-color: rgb(56, 56, 56); border-right-color: rgb(56, 56, 56); border-top-color: rgb(56, 56, 56); border-bottom-color: rgb(56, 56, 56); border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; height: 20px; color: rgb(196, 196, 196);" />
+        </ui:VisualElement>
+        <ui:Label tabindex="-1" text="Filtering..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="filtering-label" style="font-size: 9px; -unity-font-style: normal; color: rgb(20, 20, 20); padding-left: 4px; padding-bottom: 2px; padding-right: 0;" />
+        <ui:VisualElement name="elements-list-area" style="flex-grow: 1; display: flex; overflow: hidden; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20);">
+            <ui:TreeView view-data-key="unity-tree-view" focusable="true" name="element-treeview" show-alternating-row-backgrounds="All" reorderable="true" virtualization-method="DynamicHeight" auto-expand="true" horizontal-scrolling="false" style="flex-shrink: 1; flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="footer" style="height: 23px; flex-shrink: 0; display: flex;">
+            <ui:Label text="0 TOTAL ELEMENTS" display-tooltip-when-elided="true" name="total-elements-label" style="-unity-text-align: middle-right; border-right-width: 6px; flex-grow: 1; color: rgb(196, 196, 196);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

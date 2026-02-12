@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="workflow-tabs-view" style="flex-shrink: 1; flex-direction: column-reverse; padding-left: 4px; flex-grow: 1; padding-right: 4px; padding-bottom: 4px;">
+        <ui:VisualElement name="main-panel-container" style="flex-grow: 1; background-color: rgb(56, 56, 56); border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; margin-left: 1px; margin-right: 1px;">
+            <ui:ScrollView name="scrollview" style="flex-grow: 1;">
+                <ui:VisualElement name="overview-panel" style="flex-grow: 0; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; flex-shrink: 0;" />
+                <ui:VisualElement name="inspector-panel" style="flex-grow: 0; min-height: 30px; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; flex-shrink: 0;" />
+            </ui:ScrollView>
+        </ui:VisualElement>
+        <ui:VisualElement name="tabs-area" style="height: 27px; flex-direction: row; align-items: flex-end; flex-shrink: 0; overflow: hidden; bottom: -1px;">
+            <ui:VisualElement name="spacing" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 8px; flex-shrink: 0;" />
+            <ui:VisualElement name="overview-tab" style="height: 87%; border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; width: auto; background-color: rgb(56, 56, 56); right: -1px; max-width: 105px; min-width: 30px; overflow: hidden; align-items: center; flex-grow: 1; padding-left: 4px; padding-right: 4px; border-bottom-width: 1px;">
+                <ui:Label text="OVERVIEW" display-tooltip-when-elided="true" name="overview-label" show-bound-collection-size="false" style="flex-grow: 1; -unity-text-align: upper-center; -unity-font-style: normal; font-size: 13px; background-color: rgba(0, 0, 0, 0); overflow: hidden; visibility: visible; width: auto; color: rgb(160, 160, 160); padding-left: 0; padding-right: 0; padding-top: 3px; padding-bottom: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="inspector-tab" style="height: 87%; border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; width: auto; background-color: rgb(56, 56, 56); max-width: 106px; min-width: 30px; align-items: center; overflow: hidden; flex-grow: 1; margin-left: -2px; padding-left: 4px; padding-right: 4px; border-bottom-width: 1px;">
+                <ui:Label text="INSPECTOR" display-tooltip-when-elided="true" name="inspector-label" style="flex-grow: 1; -unity-text-align: upper-center; -unity-font-style: normal; font-size: 13px; background-color: rgba(56, 56, 56, 0); padding-top: 3px; overflow: hidden; width: auto; color: rgb(88, 88, 88); -unity-background-image-tint-color: rgb(47, 47, 47); padding-right: 0; padding-left: 0; padding-bottom: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
+            </ui:VisualElement>
+            <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="text" style="flex-grow: 1; -unity-text-align: lower-right; height: 100%; -unity-font-style: bold-and-italic; font-size: 15px; color: rgb(88, 88, 88); padding-bottom: 2px; display: flex;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="fade-element" style="flex-grow: 1; background-color: rgb(0, 0, 0); position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: 0.65; display: none;" />
+    </ui:VisualElement>
+</ui:UXML>

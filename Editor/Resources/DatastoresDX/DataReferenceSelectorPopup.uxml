@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="workflow-elements-view" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: flex; flex-shrink: 0; height: 360px;">
+        <ui:VisualElement name="filter-area" style="height: 24px; flex-direction: row; margin-bottom: 4px; margin-top: 4px; overflow: hidden; align-items: center; flex-shrink: 0;">
+            <uie:ToolbarSearchField focusable="true" name="search-field" style="flex-grow: 1; flex-shrink: 1; width: auto; border-left-color: rgb(56, 56, 56); border-right-color: rgb(56, 56, 56); border-top-color: rgb(56, 56, 56); border-bottom-color: rgb(56, 56, 56); border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; height: 20px; margin-right: 6px; margin-left: 6px; margin-top: 3px;" />
+        </ui:VisualElement>
+        <ui:TreeView view-data-key="unity-tree-view" focusable="true" name="element-treeview" fixed-item-height="16" show-alternating-row-backgrounds="All" reorderable="false" virtualization-method="DynamicHeight" auto-expand="true" horizontal-scrolling="false" style="flex-shrink: 0; flex-grow: 1; border-top-color: rgb(89, 89, 89); border-top-width: 1px; display: flex; margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; border-bottom-width: 1px; border-left-color: rgb(89, 89, 89); border-right-color: rgb(89, 89, 89); border-bottom-color: rgb(89, 89, 89);" />
+        <ui:VisualElement name="header-buttons-area" style="flex-grow: 0; flex-direction: row-reverse; flex-shrink: 0; align-items: center;">
+            <ui:Button text="Clear" parse-escape-sequences="true" display-tooltip-when-elided="true" name="clear-button" style="margin-top: 3px; margin-bottom: 3px;" />
+            <ui:Button text="TestError" parse-escape-sequences="true" display-tooltip-when-elided="true" name="error-button" style="display: none;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

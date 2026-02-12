@@ -1,0 +1,19 @@
+{
+  "name": "com.hspp.datastores",
+  "displayName": "Datastores DX",
+  "version": "1.0.0",
+  "unity": "6000.0",
+  "description": "",
+  "keywords": [
+    "unity",
+    "programming"
+  ],
+  "author": {
+    "name": "hs-pp",
+    "email": "",
+    "url": ""
+  },
+  "dependencies": {
+    "com.unity.addressables": "2.4.6"
+  }
+}

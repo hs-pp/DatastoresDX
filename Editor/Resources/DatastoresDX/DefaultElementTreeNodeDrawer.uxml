@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="tree-node-view" style="background-color: rgba(0, 0, 0, 0); flex-direction: row; min-width: 100px; align-items: center; height: 20px;">
+        <ui:VisualElement name="icon" style="flex-grow: 0; width: 20px; height: 20px; flex-shrink: 0; margin-right: 2px;" />
+        <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" name="label" style="flex-grow: 1; overflow: hidden; white-space: normal; -unity-text-align: middle-left; text-overflow: ellipsis; flex-shrink: 1; align-self: stretch;" />
+        <ui:Label text="LongggType" name="type-label" style="font-size: 9px; -unity-text-align: lower-left; padding-top: 0; padding-right: 6px; padding-bottom: 0; padding-left: 0; color: rgb(84, 84, 84); flex-shrink: 100000;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="view-mode" style="flex-grow: 1; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+            <ui:VisualElement style="flex-grow: 0; flex-direction: row; flex-shrink: 0;">
+                <ui:VisualElement style="flex-grow: 0; height: 28px; width: 28px; flex-shrink: 0; background-image: resource(&apos;DatastoresDX/DataCollections/FolderIcon&apos;); margin-right: 4px;" />
+                <ui:Label tabindex="-1" text="Folder Title" parse-escape-sequences="true" display-tooltip-when-elided="true" name="folder-name-label" style="font-size: 24px; -unity-font-style: bold;" />
+            </ui:VisualElement>
+            <ui:Label text="Label" name="desc-label" style="white-space: normal; padding-top: 4px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="edit-mode" style="flex-grow: 1; display: none; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+            <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; flex-direction: row;">
+                <ui:VisualElement style="flex-grow: 0; height: 28px; width: 28px; flex-shrink: 0; background-image: resource(&apos;DatastoresDX/DataCollections/FolderIcon&apos;); margin-right: 4px;" />
+                <ui:TextField picking-mode="Ignore" value="filler text" name="folder-name-textfield" style="font-size: 22px; flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:TextField picking-mode="Ignore" value="filler text" name="desc-textfield" multiline="true" style="white-space: normal; min-height: 134px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="top" style="flex-grow: 0; flex-direction: row; flex-shrink: 0;">
+            <ui:VisualElement name="spacing" style="flex-grow: 1;" />
+            <ui:Button text="O" parse-escape-sequences="true" display-tooltip-when-elided="true" name="swap-view-button" style="width: 16px; height: 16px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-grow: 0; flex-shrink: 0;">
+        <uie:PropertyField name="id-propertyfield" />
+    </ui:VisualElement>
+</ui:UXML>

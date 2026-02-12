@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1; align-items: center; flex-shrink: 0;">
+        <ui:VisualElement name="spacing" style="flex-grow: 0; height: 34px; flex-shrink: 0;" />
+        <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; overflow: hidden;">
+            <ui:Label tabindex="-1" text="No OverviewPanel found for" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; font-size: 15px;" />
+            <ui:Label tabindex="-1" text="LongLongLongLongWorkflow" parse-escape-sequences="true" display-tooltip-when-elided="true" name="workflow-name-label" style="-unity-text-align: upper-center; font-size: 24px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
