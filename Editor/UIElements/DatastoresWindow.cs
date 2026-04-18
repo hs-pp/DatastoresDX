@@ -23,7 +23,7 @@ namespace DatastoresDX.Editor
         private DatastoresWindowState m_state = new();
 
         #region Init
-        [MenuItem("HS/DatastoresDX")]
+        [MenuItem("Window/DatastoresDX")]
         public static void OpenWindow()
         {
             CreateWindow<DatastoresWindow>().Show();
