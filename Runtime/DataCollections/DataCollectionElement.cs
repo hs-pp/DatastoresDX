@@ -29,6 +29,7 @@ namespace DatastoresDX.Runtime.DataCollections
 #endif
     }
     
+    [Serializable]
     public class RootDataCollectionElement : DataCollectionElement
     {
         public RootDataCollectionElement()
