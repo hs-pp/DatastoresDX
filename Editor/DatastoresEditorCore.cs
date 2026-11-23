@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using DatastoresDX.Runtime;
+using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
@@ -44,132 +45,118 @@ namespace DatastoresDX.Editor
             WorkflowProviderComparer workflowProviderComparer = new WorkflowProviderComparer();
             ElementTypeDefinitionComparer elementTypeDefinitionComparer = new ElementTypeDefinitionComparer();
             
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Type type in GetConcreteTypesDerivedFrom<AWorkflowProvider>())
             {
-                foreach (Type type in assembly.GetTypes())
+                if (typeof(ABaseTemplateWorkflowProvider).IsAssignableFrom(type))
                 {
-                    if (!type.IsClass || type.IsAbstract || type.IsGenericType)
+                    Type baseType = type.BaseType;
+                    if (baseType != null && baseType.IsGenericType && baseType.GetGenericTypeDefinition().IsAssignableFrom(typeof(ATemplateWorkflowProvider<>))) // We're only going one layer deep.
                     {
-                        continue;
+                        elementTypeToTemplateProviderTypes.Add(baseType.GetGenericArguments()[0], type);
                     }
-                    
-                    if (typeof(AWorkflowProvider).IsAssignableFrom(type))
-                    {
-                        if (typeof(ABaseTemplateWorkflowProvider).IsAssignableFrom(type))
-                        {
-                            Type baseType = type.BaseType;
-                            if (baseType != null && baseType.IsGenericType && baseType.GetGenericTypeDefinition().IsAssignableFrom(typeof(ATemplateWorkflowProvider<>))) // We're only going one layer deep.
-                            {
-                                elementTypeToTemplateProviderTypes.Add(baseType.GetGenericArguments()[0], type);
-                            }
-                        }
-                        else
-                        {
-                            AWorkflowProvider provider = Activator.CreateInstance(type) as AWorkflowProvider;
+                }
+                else
+                {
+                    AWorkflowProvider provider = Activator.CreateInstance(type) as AWorkflowProvider;
 
-                            // Insert sorted
-                            var index = m_workflowProviders.BinarySearch(provider, workflowProviderComparer);
-                            if (index < 0)
-                            {
-                                index = ~index;
-                            }
+                    // Insert sorted
+                    var index = m_workflowProviders.BinarySearch(provider, workflowProviderComparer);
+                    if (index < 0)
+                    {
+                        index = ~index;
+                    }
 
-                            m_workflowProviders.Insert(index, provider);
-                        }
-                    }
-                    
-                    else if (typeof(IDataElement).IsAssignableFrom(type))
-                    {
-                        DataElementAttribute attribute = type.GetCustomAttribute<DataElementAttribute>();
-                        if (attribute == null)
-                        {
-                            continue;
-                        }
+                    m_workflowProviders.Insert(index, provider);
+                }
+            }
+            
+            foreach (Type type in GetConcreteTypesDerivedFrom<IDataElement>())
+            {
+                DataElementAttribute attribute = type.GetCustomAttribute<DataElementAttribute>();
+                if (attribute == null)
+                {
+                    continue;
+                }
 
-                        if (attribute.WorkflowType != null)
-                        {
-                            if (!m_elementTypeLookup.ContainsKey(attribute.WorkflowType))
-                            {
-                                m_elementTypeLookup.Add(attribute.WorkflowType, new());
-                            }
-                            
-                            ElementTypeDefinition newTypeDefinition = new ElementTypeDefinition()
-                            {
-                                SearchWindowPath = attribute.CreatePath,
-                                ElementType = type 
-                            };
-                            
-                            // Insert sorted
-                            var index = m_elementTypeLookup[attribute.WorkflowType].BinarySearch(newTypeDefinition, elementTypeDefinitionComparer);
-                            if (index < 0)
-                            {
-                                index = ~index;
-                            }
-                            m_elementTypeLookup[attribute.WorkflowType].Insert(index, newTypeDefinition);
-                        }
+                if (attribute.WorkflowType != null)
+                {
+                    if (!m_elementTypeLookup.ContainsKey(attribute.WorkflowType))
+                    {
+                        m_elementTypeLookup.Add(attribute.WorkflowType, new());
+                    }
+                    
+                    ElementTypeDefinition newTypeDefinition = new ElementTypeDefinition()
+                    {
+                        SearchWindowPath = attribute.CreatePath,
+                        ElementType = type 
+                    };
+                    
+                    // Insert sorted
+                    var index = m_elementTypeLookup[attribute.WorkflowType].BinarySearch(newTypeDefinition, elementTypeDefinitionComparer);
+                    if (index < 0)
+                    {
+                        index = ~index;
+                    }
+                    m_elementTypeLookup[attribute.WorkflowType].Insert(index, newTypeDefinition);
+                }
 
-                        if (!string.IsNullOrEmpty(attribute.IconPath))
-                        {
-                            m_iconPathLookup.Add(type, attribute.IconPath);
-                        }
-                    }
-                    
-                    else if (typeof(AOverviewPanel).IsAssignableFrom(type))
+                if (!string.IsNullOrEmpty(attribute.IconPath))
+                {
+                    m_iconPathLookup.Add(type, attribute.IconPath);
+                }
+            }
+            
+            foreach (Type type in GetConcreteTypesDerivedFrom<AOverviewPanel>())
+            {
+                OverviewPanelAttribute attribute = type.GetCustomAttribute<OverviewPanelAttribute>();
+                if (attribute != null && attribute.WorkflowType != null &&
+                    (typeof(IDataElement).IsAssignableFrom(attribute.WorkflowType)))
+                {
+                    m_overviewPanelTypeLookup.Add(attribute.WorkflowType, type);
+                }
+            }
+            
+            foreach (Type type in GetConcreteTypesDerivedFrom<AInspectorPanel>())
+            {
+                InspectorPanelAttribute attribute = type.GetCustomAttribute<InspectorPanelAttribute>();
+                if (attribute != null && attribute.ElementType != null &&
+                    typeof(IDataElement).IsAssignableFrom(attribute.ElementType))
+                {
+                    m_inspectorPanelTypeLookup.Add(attribute.ElementType, type);
+                }
+            }
+            
+            foreach (Type type in GetConcreteTypesDerivedFrom<ElementTreeNodeDrawer>())
+            {
+                ElementTreeNodeDrawerAttribute attribute =
+                    type.GetCustomAttribute<ElementTreeNodeDrawerAttribute>();
+                if (attribute != null && attribute.ElementType != null)
+                {
+                    if (typeof(IDataElement).IsAssignableFrom(attribute.ElementType))
                     {
-                        OverviewPanelAttribute attribute = type.GetCustomAttribute<OverviewPanelAttribute>();
-                        if (attribute != null && attribute.WorkflowType != null &&
-                            (typeof(IDataElement).IsAssignableFrom(attribute.WorkflowType)))
-                        {
-                            m_overviewPanelTypeLookup.Add(attribute.WorkflowType, type);
-                        }
-                    }
-                    
-                    else if (typeof(AInspectorPanel).IsAssignableFrom(type))
-                    {
-                        InspectorPanelAttribute attribute = type.GetCustomAttribute<InspectorPanelAttribute>();
-                        if (attribute != null && attribute.ElementType != null &&
-                            typeof(IDataElement).IsAssignableFrom(attribute.ElementType))
-                        {
-                            m_inspectorPanelTypeLookup.Add(attribute.ElementType, type);
-                        }
-                    }
-                    
-                    else if (typeof(ElementTreeNodeDrawer).IsAssignableFrom(type))
-                    {
-                        ElementTreeNodeDrawerAttribute attribute =
-                            type.GetCustomAttribute<ElementTreeNodeDrawerAttribute>();
-                        if (attribute != null && attribute.ElementType != null)
-                        {
-                            if (typeof(IDataElement).IsAssignableFrom(attribute.ElementType))
-                            {
-                                m_elementTreeNodeDrawerTypeLookup.Add(attribute.ElementType, type);
-                            }
-                        }
+                        m_elementTreeNodeDrawerTypeLookup.Add(attribute.ElementType, type);
                     }
                 }
             }
             
             List<Type> templateElementTypes = elementTypeToTemplateProviderTypes.Keys.ToList();
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Type type in templateElementTypes.SelectMany(x => TypeCache.GetTypesDerivedFrom(x)).Distinct())
             {
-                foreach (Type type in assembly.GetTypes())
+                Type templateElementType = templateElementTypes.Find(x => x.IsAssignableFrom(type));
+                if (templateElementType != null && type != templateElementType)
                 {
-                    Type templateElementType = templateElementTypes.Find(x => x.IsAssignableFrom(type));
-                    if (templateElementType != null && type != templateElementType)
+                    Type templateProviderType = elementTypeToTemplateProviderTypes[templateElementType];
+                    ABaseTemplateWorkflowProvider constructedProvider = Activator.CreateInstance(templateProviderType) as ABaseTemplateWorkflowProvider;
+                    constructedProvider.SetElementType(type);
+                    
+                    // insert sorted
+                    var index = m_workflowProviders.BinarySearch(constructedProvider, workflowProviderComparer);
+                    if (index < 0)
                     {
-                        Type templateProviderType = elementTypeToTemplateProviderTypes[templateElementType];
-                        ABaseTemplateWorkflowProvider constructedProvider = Activator.CreateInstance(templateProviderType) as ABaseTemplateWorkflowProvider;
-                        constructedProvider.SetElementType(type);
-                        
-                        // insert sorted
-                        var index = m_workflowProviders.BinarySearch(constructedProvider, workflowProviderComparer);
-                        if (index < 0)
-                        {
-                            index = ~index;
-                        }
-
-                        m_workflowProviders.Insert(index, constructedProvider);
+                        index = ~index;
                     }
+
+                    m_workflowProviders.Insert(index, constructedProvider);
                 }
             }
             
@@ -202,6 +189,11 @@ namespace DatastoresDX.Editor
                     }
                 }
             }
+        }
+        
+        private static IEnumerable<Type> GetConcreteTypesDerivedFrom<T>()
+        {
+            return TypeCache.GetTypesDerivedFrom<T>().Where(type => type.IsClass && !type.IsAbstract && !type.IsGenericType);
         }
         
         public static List<AWorkflowProvider> GetWorkflowProviders()
