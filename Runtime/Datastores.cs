@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DatastoresDX.Runtime.DataCollections;
 using UnityEngine;
+using UnityEngine.Assemblies;
 
 namespace DatastoresDX.Runtime
 {
@@ -35,9 +36,14 @@ namespace DatastoresDX.Runtime
         {
             m_pipelineProviders.Clear();
 
+            string datastoresName = typeof(APipelineProvider).Assembly.GetName().Name;
+            List<Assembly> assemblies = CurrentAssemblies.GetLoadedAssemblies()
+                .Where(a => a.GetName().Name == datastoresName || a.GetReferencedAssemblies().Any(r => r.Name == datastoresName))
+                .ToList();
+
             Dictionary<Type, Type> elementTypeToTemplateProviderTypes = new();
 
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly assembly in assemblies)
             {
                 foreach (Type type in assembly.GetTypes())
                 {
@@ -66,7 +72,7 @@ namespace DatastoresDX.Runtime
             }
             
             List<Type> templateElementTypes = elementTypeToTemplateProviderTypes.Keys.ToList();
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly assembly in assemblies)
             {
                 foreach (Type type in assembly.GetTypes())
                 {

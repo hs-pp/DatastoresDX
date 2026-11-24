@@ -1,8 +1,8 @@
 {
   "name": "com.hspp.datastores",
   "displayName": "Datastores DX",
-  "version": "1.0.1",
-  "unity": "6000.0",
+  "version": "1.0.2",
+  "unity": "6000.4",
   "description": "",
   "keywords": [
     "unity",
