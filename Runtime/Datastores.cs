@@ -4,27 +4,26 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DatastoresDX.Runtime.DataCollections;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.Assemblies;
 
 namespace DatastoresDX.Runtime
 {
-    public static class Datastores
+    public static partial class Datastores
     {
-        private static List<APipelineProvider> m_pipelineProviders = new();
+        [NoAutoStaticsCleanup]
+        private static List<APipelineProvider> m_pipelineProviders;
+        private static List<APipelineProvider> PipelineProviders => m_pipelineProviders ??= LoadPipelineProviders();
+        [AutoStaticsCleanup]
         private static List<APipeline> m_pipelines = new();
+        [AutoStaticsCleanup]
         private static Dictionary<Uid, APipeline> m_elementIdToPipeline = new();
-        
+        [AutoStaticsCleanup]
         private static Dictionary<Type, List<IDataElement>> m_typeToIds = new(); // TODO: Possibly use TypeCache?
+        [AutoStaticsCleanup]
         public static bool IsInitialized { get; private set; }
-        
-        static Datastores()
-        {
-            LoadPipelineProviders();
-            // Need to also call InitializePipelineProviders to be considered fully loaded.
-            // But leave this here so it gets called at editor time too.
-        }
-        
+
         // // We're loading this from SystemCore currently.
         // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         // private static void OnBeforeSceneLoadRuntimeMethod()
@@ -32,9 +31,9 @@ namespace DatastoresDX.Runtime
         //     _ = InitializePipelines();
         // }
 
-        private static void LoadPipelineProviders()
+        private static List<APipelineProvider> LoadPipelineProviders()
         {
-            m_pipelineProviders.Clear();
+            List<APipelineProvider> pipelineProviders = new();
 
             string datastoresName = typeof(APipelineProvider).Assembly.GetName().Name;
             List<Assembly> assemblies = CurrentAssemblies.GetLoadedAssemblies()
@@ -65,7 +64,7 @@ namespace DatastoresDX.Runtime
 
                         else
                         {
-                            m_pipelineProviders.Add((APipelineProvider)Activator.CreateInstance(type));
+                            pipelineProviders.Add((APipelineProvider)Activator.CreateInstance(type));
                         }
                     }
                 }
@@ -84,11 +83,13 @@ namespace DatastoresDX.Runtime
                         constructedProvider.SetElementType(type);
                         if (constructedProvider.ShouldCreateProvider)
                         {
-                            m_pipelineProviders.Add(constructedProvider);
+                            pipelineProviders.Add(constructedProvider);
                         }
                     }
                 }
             }
+
+            return pipelineProviders;
         }
 
         public static async Task InitializePipelines()
@@ -101,7 +102,7 @@ namespace DatastoresDX.Runtime
             Debug.Log("[Datastores] Initializing Datastores Runtime.");
 
             // Load ElementId to Provider map.
-            foreach (APipelineProvider provider in m_pipelineProviders)
+            foreach (APipelineProvider provider in PipelineProviders)
             {
                 await provider.Initialize();
                 foreach (APipeline pipeline in provider.GetPipelines())
@@ -127,7 +128,7 @@ namespace DatastoresDX.Runtime
         
         public static APipelineProvider GetPipelineProvider(Uid providerId)
         {
-            foreach (APipelineProvider provider in m_pipelineProviders)
+            foreach (APipelineProvider provider in PipelineProviders)
             {
                 if (provider.Id.Equals(providerId))
                 {
@@ -140,7 +141,7 @@ namespace DatastoresDX.Runtime
         public static List<APipelineProvider> GetPipelineProvidersOfType<T>() where T : APipelineProvider
         {
             List<APipelineProvider> pipelineProviders = new();
-            foreach (APipelineProvider provider in m_pipelineProviders)
+            foreach (APipelineProvider provider in PipelineProviders)
             {
                 if (typeof(T).IsAssignableFrom(provider.GetType()))
                 {
@@ -221,6 +222,7 @@ namespace DatastoresDX.Runtime
             return null;
         }
         
+        [AutoStaticsCleanup]
         private static Action m_onInitialized;
         public static void OnInitializedOrCallImmediately(Action onInit)
         {
