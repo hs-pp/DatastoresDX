@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 
 namespace DatastoresDX.Editor.DataCollections
 {
+    [System.Serializable]
     [InspectorPanel(typeof(DataCollectionElement))]
     public class DefaultDataCollectionInspectorPanel : AInspectorPanel
     {

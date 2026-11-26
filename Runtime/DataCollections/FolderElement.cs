@@ -5,6 +5,7 @@ namespace DatastoresDX.Runtime.DataCollections
     /// <summary>
     /// Simple folder element available to all DataCollections.
     /// </summary>
+    [System.Serializable]
     [DataElement(typeof(DataCollection), "Folder", "DatastoresDX/DataCollections/FolderIcon")]
     public class FolderElement : DataCollectionElement
     {

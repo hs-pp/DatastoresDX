@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 namespace DatastoresDX.Editor.DataCollections
 {
+    [System.Serializable]
     [InspectorPanel(typeof(FolderElement))]
     public class FolderInspectorPanel : AInspectorPanel
     {

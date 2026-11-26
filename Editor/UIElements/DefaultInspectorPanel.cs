@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 
 namespace DatastoresDX.Editor
 {
+    [System.Serializable]
     public class DefaultInspectorPanel : AInspectorPanel
     {
         private const string VIEW_UXML = "DatastoresDX/DefaultInspectorPanel";
