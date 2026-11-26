@@ -98,11 +98,8 @@ namespace DatastoresDX.Editor
         private static string m_dataCollectionGroupNamePrefix = "[DataCollections-Group] ";
         private static string DataCollectionAddressablesPrefix => "DataCollection";
         private static string m_bundledAssetPrefix => "BundledAsset";
-        private static string m_dependencyPrefix => "Dependency";
-        
+
         private static string m_templateToUse = "Packed Assets"; // Group settings template to use for newly created groups.
-        private static int m_minimumFileSize = 0; //10000; // Minimum file size to consider for asset bundles.
-        private static string m_projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets/".Length);
 
         private List<GroupAction> m_groupActions = new();
         private List<AssetAction> m_assetActions = new();
@@ -161,9 +158,7 @@ namespace DatastoresDX.Editor
                 };
                 group.AddAssetDef(dataCollectionAsset);
                 processedAssetGuids.Add(dataCollectionGuid, dataCollectionAsset);
-                
-                ProcessAssetDependencies(dataCollectionPath, group, dataCollection.Id, processedAssetGuids);
-                
+
                 foreach (DataCollectionElement element in dataCollection.GetAllElements())
                 {
                     foreach (BundleAssetConfig bundleAssetConfig in element.GetAssetsToBundle())
@@ -198,8 +193,6 @@ namespace DatastoresDX.Editor
                         };
                         group.AddAssetDef(assetDefinition);
                         processedAssetGuids.Add(bundleAssetConfig.AssetGuid, assetDefinition);
-
-                        ProcessAssetDependencies(bundleAssetConfig.AssetGuid, group, element.Id, processedAssetGuids);
                     }
                 }
             }
@@ -337,53 +330,6 @@ namespace DatastoresDX.Editor
             return results;
         }
 
-        private void ProcessAssetDependencies(string assetPath, GroupDefinition groupDefinition, Uid ownerElementId, Dictionary<string, AssetDefinition> processedAssetGuids)
-        {
-            string[] dependencies = AssetDatabase.GetDependencies(assetPath);
-            
-            foreach (string dependencyPath in dependencies)
-            {
-                string dependencyGuid = AssetDatabase.AssetPathToGUID(dependencyPath);
-                
-                if (string.IsNullOrEmpty(dependencyGuid))
-                {
-                    return;
-                }
-                
-                if(dependencyPath.EndsWith(".cs") || dependencyPath.EndsWith(".dll"))
-                {
-                    // Ignore scripts
-                    continue;
-                }
-                
-                // Only ever add an asset once.
-                if (processedAssetGuids.ContainsKey(dependencyGuid))
-                {
-                    processedAssetGuids[dependencyGuid].Labels.Add(ownerElementId.ToString());
-                    return;
-                }                
-                
-                // Only create asset bundle for large files
-                var diskPath = m_projectRoot + "/" + dependencyPath;
-                var fileInfo = new System.IO.FileInfo(diskPath);
-                if (fileInfo.Length > m_minimumFileSize)
-                {
-                    continue;
-                }
-
-                AssetDefinition assetDefinition = new AssetDefinition
-                {
-                    AddressableName = GetDependencyAddressableName(dependencyGuid),
-                    AssetGuid = dependencyGuid,
-                    Labels = new() { m_dependencyPrefix, ownerElementId.ToString() },
-                };
-                groupDefinition.AddAssetDef(assetDefinition);
-                processedAssetGuids.Add(dependencyGuid, assetDefinition);
-                
-                ProcessAssetDependencies(dependencyPath, groupDefinition, ownerElementId, processedAssetGuids);
-            }
-        }
-        
         public override void FixIssues(AddressableAssetSettings settings)
         {
             AddressableAssetGroupTemplate groupTemplate = settings.GroupTemplateObjects.Find(x => x.name == m_templateToUse) as AddressableAssetGroupTemplate;
@@ -432,7 +378,7 @@ namespace DatastoresDX.Editor
                         settings.RemoveAssetEntry(assetAction.AssetGuid);
                     }
 
-                    return;
+                    continue;
                 }
                 
                 // Other operations
@@ -476,12 +422,6 @@ namespace DatastoresDX.Editor
             return $"{m_bundledAssetPrefix}/{bundleAssetConfig.AssetGuid}";
         }
 
-        private static string GetDependencyAddressableName(string objectGuid)
-        {
-            //return $"{m_dependencyPrefix}/{AssetDatabase.GUIDToAssetPath(objectGuid)}";
-            return $"{m_dependencyPrefix}/{objectGuid}";
-        }
-        
         private void ClearAll()
         {
             ClearAnalysis();
