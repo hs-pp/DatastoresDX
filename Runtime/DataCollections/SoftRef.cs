@@ -61,7 +61,8 @@ namespace DatastoresDX.Runtime.DataCollections
             UnityEngine.Object obj = handle.WaitForCompletion();
             if(typeof(Component).IsAssignableFrom(typeof(T)))
             {
-                return (obj as GameObject).GetComponent<T>();
+                GameObject gameObject = obj as GameObject;
+                return gameObject != null ? gameObject.GetComponent<T>() : null;
             }
             else
             {
@@ -81,8 +82,42 @@ namespace DatastoresDX.Runtime.DataCollections
                 // GOTCHA: AsyncOperationHandle.Task from a default returns a Task that never finishes!! Do we need a better solution?
                 return default;
             }
-            return Addressables.LoadAssetAsync<T>(GetAddressablePath(m_guid));
+
+            string address = GetAddressablePath(m_guid);
+            if (!typeof(Component).IsAssignableFrom(typeof(T)))
+            {
+                return Addressables.LoadAssetAsync<T>(address);
+            }
+
+            // Addressables stores prefabs as GameObjects, so asking for a component type directly finds nothing
+            // (InvalidKeyException). Load the GameObject and take the component from it.
+            // releaseDependenciesOnFailure: false means the GameObject load is released exactly once, when the returned
+            // handle is released, even if the load fails.
+            AsyncOperationHandle<GameObject> gameObjectHandle = Addressables.LoadAssetAsync<GameObject>(address);
+            AsyncOperationHandle<T> componentHandle = Addressables.ResourceManager.CreateChainOperation<T, GameObject>(
+                gameObjectHandle, GetComponentFromGameObject, releaseDependenciesOnFailure: false);
+            gameObjectHandle.Release(); // The chain holds its own reference to the GameObject load.
+            return componentHandle;
 #endif
+        }
+
+        // Outside the #if so editor compiles check it too.
+        private static AsyncOperationHandle<T> GetComponentFromGameObject(AsyncOperationHandle<GameObject> gameObjectHandle)
+        {
+            if (gameObjectHandle.Status != AsyncOperationStatus.Succeeded || gameObjectHandle.Result == null)
+            {
+                return Addressables.ResourceManager.CreateCompletedOperation<T>(null,
+                    $"SoftRef<{typeof(T).Name}>: failed to load the GameObject ({gameObjectHandle.DebugName}).");
+            }
+
+            T component = gameObjectHandle.Result.GetComponent<T>();
+            if (component == null)
+            {
+                return Addressables.ResourceManager.CreateCompletedOperation<T>(null,
+                    $"SoftRef<{typeof(T).Name}>: {gameObjectHandle.Result.name} has no {typeof(T).Name} component.");
+            }
+
+            return Addressables.ResourceManager.CreateCompletedOperation(component, string.Empty);
         }
         
         // DelayedOperation if we ever want to mock slow load times when we call GetAsync().
