@@ -11,6 +11,7 @@ using Object = UnityEngine.Object;
 namespace DatastoresDX.Editor.DataCollections
 {
     [CustomPropertyDrawer(typeof(SoftRef<>))]
+    [CustomPropertyDrawer(typeof(SceneRef))]
     public class SoftRefDrawer : PropertyDrawer
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
@@ -62,7 +63,7 @@ namespace DatastoresDX.Editor.DataCollections
             m_assetGuidSP = property;
             m_guidSP = property.FindPropertyRelative(BaseSoftRef.Guid_VarName);
             m_fieldInfo = fieldInfo;
-            m_assetType = m_fieldInfo.FieldType.GetGenericArguments()[0];
+            m_assetType = m_fieldInfo.FieldType == typeof(SceneRef) ? typeof(SceneAsset) : m_fieldInfo.FieldType.GetGenericArguments()[0];
             
             CreateLayout();
             SetupView();
@@ -125,7 +126,8 @@ namespace DatastoresDX.Editor.DataCollections
             if (m_object != null)
             {
                 m_objectField.SetValueWithoutNotify(m_object);
-                m_togglePreviewButton.style.display = DisplayStyle.Flex;
+                // Scenes have nothing to preview.
+                m_togglePreviewButton.style.display = m_assetType == typeof(SceneAsset) ? DisplayStyle.None : DisplayStyle.Flex;
                 m_createNewButton.style.display = DisplayStyle.None;
                 HidePreview();
             }
