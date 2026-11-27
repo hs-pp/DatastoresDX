@@ -197,7 +197,13 @@ namespace DatastoresDX.Editor.DataCollections
         
         public override List<ElementTypeDefinition> GetElementTypes()
         {
-            return DatastoresEditorCore.GetElementTypes(DataCollection.GetType());
+            List<ElementTypeDefinition> elementTypes = DatastoresEditorCore.GetElementTypes(DataCollection.GetType());
+            DataCollectionAttribute attribute = DataCollection.GetType().GetCustomAttribute<DataCollectionAttribute>();
+            if (attribute != null && !attribute.AllowFolders)
+            {
+                elementTypes.RemoveAll(x => x.ElementType == typeof(FolderElement));
+            }
+            return elementTypes;
         }
 
         public override void OnPingRequested()

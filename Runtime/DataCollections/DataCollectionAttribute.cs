@@ -11,12 +11,14 @@ namespace DatastoresDX.Runtime.DataCollections
         public bool IsSoloWorkflow;
         public bool RuntimeSupported;
         public string DisplayNameOverride;
+        public bool AllowFolders;
 
-        public DataCollectionAttribute(bool isSoloWorkflow, bool runtimeSupported = true, string displayNameOverride = null)
+        public DataCollectionAttribute(bool isSoloWorkflow, bool runtimeSupported = true, string displayNameOverride = null, bool allowFolders = true)
         {
             IsSoloWorkflow = isSoloWorkflow;
             RuntimeSupported = runtimeSupported;
             DisplayNameOverride = displayNameOverride;
+            AllowFolders = allowFolders;
         }
     }
 }
