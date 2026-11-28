@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True" authoring-id="-643134630">
     <ui:VisualElement name="main-container" style="flex-grow: 1; background-color: rgb(47, 47, 47);">
-        <ui:TwoPaneSplitView fixed-pane-initial-dimension="0" name="split-view" orientation="Vertical" fixed-pane-index="1">
+        <ui:TwoPaneSplitView name="split-view" orientation="Vertical">
             <ui:VisualElement name="top-panel" style="flex-shrink: 0; flex-grow: 1; flex-direction: row;">
                 <ui:VisualElement name="body" style="flex-direction: column-reverse; flex-grow: 1;">
                     <ui:VisualElement name="main-area" style="flex-grow: 1; flex-direction: row;">
