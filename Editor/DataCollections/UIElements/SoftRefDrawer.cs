@@ -146,6 +146,7 @@ namespace DatastoresDX.Editor.DataCollections
         private void HidePreview()
         {
             m_previewContainer.style.display = DisplayStyle.None;
+            SetFillsSpace(false);
             m_inspectorElement.Unbind();
             if (m_inspectorElement.parent == m_previewContainer)
             {
@@ -156,8 +157,21 @@ namespace DatastoresDX.Editor.DataCollections
         private void ShowPreview()
         {
             m_previewContainer.style.display = DisplayStyle.Flex;
+            SetFillsSpace(true);
             m_inspectorElement.Bind(new SerializedObject(m_object));
             m_previewContainer.Add(m_inspectorElement);
+        }
+
+        // An open preview stretches to fill the inspector.
+        private void SetFillsSpace(bool fill)
+        {
+            StyleFloat grow = fill ? 1 : StyleKeyword.Null;
+            style.flexGrow = grow;
+            PropertyField propertyField = GetFirstAncestorOfType<PropertyField>();
+            if (propertyField != null)
+            {
+                propertyField.style.flexGrow = grow;
+            }
         }
 
         private void OnObjectFieldChanged(ChangeEvent<Object> evt)

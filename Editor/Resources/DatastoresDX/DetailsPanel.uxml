@@ -3,7 +3,7 @@
         <ui:VisualElement name="main-panel-container" style="flex-grow: 1; background-color: rgb(56, 56, 56); border-left-color: rgb(20, 20, 20); border-right-color: rgb(20, 20, 20); border-top-color: rgb(20, 20, 20); border-bottom-color: rgb(20, 20, 20); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; margin-left: 1px; margin-right: 1px;">
             <ui:ScrollView name="scrollview" style="flex-grow: 1;">
                 <ui:VisualElement name="overview-panel" style="flex-grow: 0; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; flex-shrink: 0;" />
-                <ui:VisualElement name="inspector-panel" style="flex-grow: 0; min-height: 30px; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; flex-shrink: 0;" />
+                <ui:VisualElement name="inspector-panel" style="flex-grow: 1; min-height: 30px; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px; flex-shrink: 0;" />
             </ui:ScrollView>
         </ui:VisualElement>
         <ui:VisualElement name="tabs-area" style="height: 27px; flex-direction: row; align-items: flex-end; flex-shrink: 0; overflow: hidden; bottom: -1px;">
