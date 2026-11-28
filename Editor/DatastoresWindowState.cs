@@ -8,7 +8,7 @@ namespace DatastoresDX.Editor
     public class DatastoresWindowState
     {
         [SerializeField]
-        public float SplitViewPosition = 200;
+        public float SplitViewPosition = 0;
         [SerializeField]
         public bool IsShowingEditorTab = true;
 
