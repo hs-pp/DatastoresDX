@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using DatastoresDX.Runtime.DataCollections;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -38,6 +39,40 @@ namespace DatastoresDX.Editor.DataCollections
         }
     }
 
+    /// <summary>
+    /// Sent up the tree when a SoftRef field attaches, so the inspector panel can restore and track its preview.
+    /// </summary>
+    public class SoftRefAttachedEvent : EventBase<SoftRefAttachedEvent>
+    {
+        public SoftRefElement Field { get; private set; }
+
+        public static SoftRefAttachedEvent GetPooled(SoftRefElement field)
+        {
+            SoftRefAttachedEvent evt = GetPooled();
+            evt.target = field;
+            evt.Field = field;
+            return evt;
+        }
+
+        public SoftRefAttachedEvent()
+        {
+            LocalInit();
+        }
+
+        protected override void Init()
+        {
+            base.Init();
+            LocalInit();
+        }
+
+        private void LocalInit()
+        {
+            bubbles = true;
+            tricklesDown = false;
+            Field = null;
+        }
+    }
+
     public class SoftRefElement : VisualElement
     {
         private const string VIEW_UXML = "DatastoresDX/DataCollections/SoftRefDrawer";
@@ -45,7 +80,7 @@ namespace DatastoresDX.Editor.DataCollections
         private const string CREATE_NEW_BUTTON_TAG = "create-new-button";
         private const string TOGGLE_PREVIEW_BUTTON_TAG = "toggle-preview-button";
         private const string PREVIEW_CONTAINER_TAG = "preview-container";
-        
+
         private ObjectField m_objectField;
         private Button m_createNewButton;
         private Button m_togglePreviewButton;
@@ -57,6 +92,27 @@ namespace DatastoresDX.Editor.DataCollections
         private FieldInfo m_fieldInfo;
         private Type m_assetType;
         private Object m_object;
+        private bool m_previewOpen;
+
+        // Path inside the element, like m_graph.
+        public string RelativePropertyPath { get; }
+        public event Action<bool> PreviewOpenChanged;
+
+        public bool PreviewOpen
+        {
+            get => m_previewOpen;
+            set
+            {
+                if (value && m_object != null)
+                {
+                    ShowPreview();
+                }
+                else
+                {
+                    HidePreview();
+                }
+            }
+        }
 
         public SoftRefElement(SerializedProperty property, FieldInfo fieldInfo)
         {
@@ -64,7 +120,8 @@ namespace DatastoresDX.Editor.DataCollections
             m_guidSP = property.FindPropertyRelative(BaseSoftRef.Guid_VarName);
             m_fieldInfo = fieldInfo;
             m_assetType = m_fieldInfo.FieldType == typeof(SceneRef) ? typeof(SceneAsset) : m_fieldInfo.FieldType.GetGenericArguments()[0];
-            
+            RelativePropertyPath = Regex.Replace(property.propertyPath, @"^m_elements\.Array\.data\[\d+\]\.", "");
+
             CreateLayout();
             SetupView();
         }
@@ -94,6 +151,17 @@ namespace DatastoresDX.Editor.DataCollections
             };
             
             m_togglePreviewButton.clicked += OnPreviewToggleClicked;
+            RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+        }
+
+        private void OnAttachToPanel(AttachToPanelEvent evt)
+        {
+            // The PropertyField parent only exists once attached.
+            SetFillsSpace(m_previewOpen);
+            using (SoftRefAttachedEvent attachedEvent = SoftRefAttachedEvent.GetPooled(this))
+            {
+                SendEvent(attachedEvent);
+            }
         }
 
         private void SetupView()
@@ -129,7 +197,8 @@ namespace DatastoresDX.Editor.DataCollections
                 // Scenes have nothing to preview.
                 m_togglePreviewButton.style.display = m_assetType == typeof(SceneAsset) ? DisplayStyle.None : DisplayStyle.Flex;
                 m_createNewButton.style.display = DisplayStyle.None;
-                HidePreview();
+                // Keeps an open preview open on the new object.
+                PreviewOpen = m_previewOpen;
             }
             else
             {
@@ -145,6 +214,7 @@ namespace DatastoresDX.Editor.DataCollections
 
         private void HidePreview()
         {
+            SetPreviewOpenFlag(false);
             m_previewContainer.style.display = DisplayStyle.None;
             SetFillsSpace(false);
             m_inspectorElement.Unbind();
@@ -156,10 +226,21 @@ namespace DatastoresDX.Editor.DataCollections
 
         private void ShowPreview()
         {
+            SetPreviewOpenFlag(true);
             m_previewContainer.style.display = DisplayStyle.Flex;
             SetFillsSpace(true);
             m_inspectorElement.Bind(new SerializedObject(m_object));
             m_previewContainer.Add(m_inspectorElement);
+        }
+
+        private void SetPreviewOpenFlag(bool open)
+        {
+            if (m_previewOpen == open)
+            {
+                return;
+            }
+            m_previewOpen = open;
+            PreviewOpenChanged?.Invoke(open);
         }
 
         // An open preview stretches to fill the inspector.
@@ -207,14 +288,7 @@ namespace DatastoresDX.Editor.DataCollections
 
         private void OnPreviewToggleClicked()
         {
-            if (m_previewContainer.style.display == DisplayStyle.None)
-            {
-                ShowPreview();
-            }
-            else
-            {
-                HidePreview();
-            }
+            PreviewOpen = !m_previewOpen;
         }
     }
 }
