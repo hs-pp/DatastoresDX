@@ -9,6 +9,7 @@ using UnityEditor;
 
 namespace DatastoresDX.Runtime.DataCollections
 {
+    [Serializable]
     public abstract class BaseSoftRef
     {
         [SerializeField]
