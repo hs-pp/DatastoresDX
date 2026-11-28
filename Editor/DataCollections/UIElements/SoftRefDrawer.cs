@@ -85,8 +85,9 @@ namespace DatastoresDX.Editor.DataCollections
         private Button m_createNewButton;
         private Button m_togglePreviewButton;
         private VisualElement m_previewContainer;
-        private InspectorElement m_inspectorElement;
-        
+        private VisualElement m_previewContent;
+        private Func<Object, VisualElement> m_previewContentFactory;
+
         private SerializedProperty m_assetGuidSP;
         private SerializedProperty m_guidSP;
         private FieldInfo m_fieldInfo;
@@ -114,6 +115,20 @@ namespace DatastoresDX.Editor.DataCollections
             }
         }
 
+        // Builds what the preview shows for the referenced object. Null uses the asset's default inspector.
+        public Func<Object, VisualElement> PreviewContentFactory
+        {
+            get => m_previewContentFactory;
+            set
+            {
+                m_previewContentFactory = value;
+                if (m_previewOpen)
+                {
+                    ShowPreview();
+                }
+            }
+        }
+
         public SoftRefElement(SerializedProperty property, FieldInfo fieldInfo)
         {
             m_assetGuidSP = property;
@@ -135,8 +150,7 @@ namespace DatastoresDX.Editor.DataCollections
             m_createNewButton = this.Q<Button>(CREATE_NEW_BUTTON_TAG);
             m_togglePreviewButton = this.Q<Button>(TOGGLE_PREVIEW_BUTTON_TAG);
             m_previewContainer = this.Q<VisualElement>(PREVIEW_CONTAINER_TAG);
-            m_inspectorElement = new InspectorElement();
-            
+
             m_objectField.allowSceneObjects = false;
             m_objectField.label = m_assetGuidSP.displayName;
             m_objectField.objectType = m_assetType;
@@ -217,11 +231,7 @@ namespace DatastoresDX.Editor.DataCollections
             SetPreviewOpenFlag(false);
             m_previewContainer.style.display = DisplayStyle.None;
             SetFillsSpace(false);
-            m_inspectorElement.Unbind();
-            if (m_inspectorElement.parent == m_previewContainer)
-            {
-                m_previewContainer.Remove(m_inspectorElement);
-            }
+            ClearPreviewContent();
         }
 
         private void ShowPreview()
@@ -229,8 +239,32 @@ namespace DatastoresDX.Editor.DataCollections
             SetPreviewOpenFlag(true);
             m_previewContainer.style.display = DisplayStyle.Flex;
             SetFillsSpace(true);
-            m_inspectorElement.Bind(new SerializedObject(m_object));
-            m_previewContainer.Add(m_inspectorElement);
+            ClearPreviewContent();
+            m_previewContent = m_previewContentFactory != null ? m_previewContentFactory(m_object) : CreateDefaultPreviewContent(m_object);
+            m_previewContainer.Add(m_previewContent);
+        }
+
+        // Removing the content detaches it, so content holding resources should release them on DetachFromPanelEvent.
+        private void ClearPreviewContent()
+        {
+            if (m_previewContent == null)
+            {
+                return;
+            }
+
+            if (m_previewContent is InspectorElement inspectorElement)
+            {
+                inspectorElement.Unbind();
+            }
+            m_previewContent.RemoveFromHierarchy();
+            m_previewContent = null;
+        }
+
+        private static VisualElement CreateDefaultPreviewContent(Object obj)
+        {
+            InspectorElement inspectorElement = new InspectorElement();
+            inspectorElement.Bind(new SerializedObject(obj));
+            return inspectorElement;
         }
 
         private void SetPreviewOpenFlag(bool open)
